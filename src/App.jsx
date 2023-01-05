@@ -1,7 +1,10 @@
-import { useEffect, useState } from "react";
+import { Card, CardContent } from "@mui/material";
+import { useState } from "react";
 import { getAreaData } from "./api";
-import "./App.css";
+import Grid from "@mui/material/Grid";
 import { countries } from "./countries";
+
+import "./App.css";
 
 function App() {
   const [areas, setAreas] = useState([]);
@@ -21,7 +24,6 @@ function App() {
       } else {
         window.alert(error.message);
       }
-
       setResultStr("Enter an outcode to begin!");
     }
   };
@@ -66,6 +68,26 @@ function App() {
         <input type="submit" value="Search"></input>
       </form>
       <h2>{resultStr}</h2>
+      <div>
+        <Grid container spacing={0} direction="row" justifyContent="center">
+          {areas.map((area) => {
+            return (
+              <Grid key={area["place name"]} className="item">
+                <Card>
+                  <CardContent>
+                    <h3>{area["place name"]}</h3>
+                    <p>
+                      Latitude: {area.latitude} Longitude: {area.longitude}
+                    </p>
+                    <p>Country/State: {area.state}</p>
+                    <p>Abbreviation: {area["state abbreviation"]}</p>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </div>
     </div>
   );
 }
