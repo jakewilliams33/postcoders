@@ -1,9 +1,14 @@
 import axios from "axios";
 
 export const getAreaData = async (outCode, countryCode) => {
-  const { data } = await axios.get(
-    `https://api.zippopotam.us/${countryCode}/${outCode}`
-  );
+  const url = `https://api.zippopotam.us/${countryCode}/${outCode}`;
 
-  return data.places;
+  const cachedData = JSON.parse(localStorage.getItem(url));
+
+  if (!cachedData) {
+    const { data } = await axios.get(url);
+    localStorage.setItem(url, JSON.stringify(data));
+    return data.places;
+  }
+  return cachedData.places;
 };
