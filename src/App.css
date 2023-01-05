@@ -6,7 +6,13 @@
 }
 
 .App {
-  height: 90vh;
+  min-height: 90vh;
+  height: auto;
   width: 90vw;
   border: solid grey 2px;
+}
+
+.item {
+  margin: 3px;
+  text-align: left;
 }
