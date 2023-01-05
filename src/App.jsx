@@ -1,29 +1,71 @@
 import { useEffect, useState } from "react";
 import { getAreaData } from "./api";
-
 import "./App.css";
+import { countries } from "./countries";
 
 function App() {
   const [areas, setAreas] = useState([]);
+  const [outCode, setOutCode] = useState("");
+  const [countryCode, setCountryCode] = useState("GB");
+  const [resultStr, setResultStr] = useState("Enter an outcode to begin!");
 
-  const load = async () => {
+  const load = async (outCode) => {
     try {
-      const areaData = await getAreaData();
-
+      setResultStr("Searching…");
+      const areaData = await getAreaData(outCode, countryCode);
       setAreas(areaData);
+      setResultStr(`Areas for ${outCode}: ${areaData.length}`);
     } catch (error) {
-      window.alert(error);
+      if (error.code === "ERR_BAD_REQUEST") {
+        window.alert("Please enter a valid outcode");
+      } else {
+        window.alert(error.message);
+      }
+
+      setResultStr("Enter an outcode to begin!");
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  const handleChangeText = (event) => {
+    setOutCode(event.target.value.toUpperCase());
+  };
+
+  const handleChangeSelect = (event) => {
+    setCountryCode(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    load(outCode);
+    setOutCode("");
+  };
 
   return (
     <div className="App">
       <h1>Postcoders</h1>
-      <h2>{`Areas for BB10: ${areas.length}`}</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          value={outCode}
+          onChange={(event) => handleChangeText(event)}
+          type="text"
+          placeholder="Type outcode here…"
+          required
+        ></input>
+        <select
+          value={countryCode}
+          onChange={(event) => handleChangeSelect(event)}
+        >
+          {countries.map((country) => {
+            return (
+              <option key={country} value={country}>
+                {country}
+              </option>
+            );
+          })}
+        </select>
+        <input type="submit" value="Search"></input>
+      </form>
+      <h2>{resultStr}</h2>
     </div>
   );
 }
